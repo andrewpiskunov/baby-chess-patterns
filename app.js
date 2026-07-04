@@ -28,6 +28,8 @@ function showScene(index) {
     t.classList.toggle('is-active', active);
     t.setAttribute('aria-selected', active);
   });
+  if (name === 'piece') announcePiece();
+  else if ('speechSynthesis' in window) speechSynthesis.cancel();
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
@@ -58,10 +60,22 @@ document.addEventListener('keydown', e => {
 // ---------- Смена фигуры в конце каждого прохода ----------
 
 const pieces = pieceWrap.querySelectorAll('.piece');
+let soundOn = true;
+
+function announcePiece() {
+  if (!soundOn || !('speechSynthesis' in window)) return;
+  if (SCENES[sceneIndex] !== 'piece') return;
+  const utterance = new SpeechSynthesisUtterance(pieces[pieceIndex].dataset.name);
+  utterance.lang = 'ru-RU';
+  utterance.rate = 0.85;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
+}
 
 function showPiece(index) {
   pieceIndex = index % pieces.length;
   pieces.forEach((p, i) => p.classList.toggle('is-active', i === pieceIndex));
+  announcePiece();
 }
 
 pieceWrap.addEventListener('animationiteration', () => showPiece(pieceIndex + 1));
@@ -114,6 +128,15 @@ document.querySelectorAll('[data-timer]').forEach(btn => {
 });
 
 // ---------- Полный экран, печать, инфо ----------
+
+const soundBtn = document.getElementById('soundBtn');
+soundBtn.addEventListener('click', () => {
+  soundOn = !soundOn;
+  soundBtn.classList.toggle('is-active', soundOn);
+  soundBtn.setAttribute('aria-pressed', soundOn);
+  if (!soundOn && 'speechSynthesis' in window) speechSynthesis.cancel();
+  if (soundOn) announcePiece();
+});
 
 document.getElementById('fullscreenBtn').addEventListener('click', () => {
   if (document.fullscreenElement) document.exitFullscreen();
