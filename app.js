@@ -1,6 +1,8 @@
-// Baby Chess Patterns — переключение сцен, скорость, таймер, авто-скрытие панели
+// Baby Chess Patterns — переключение сцен, скорость, озвучка, таймер,
+// выбор фигуры, инверсия, сохранение настроек, авто-скрытие панели
 
-const SCENES = ['board', 'piece', 'classic'];
+const SCENES = ['board', 'piece', 'classic', 'spiral', 'diag', 'dots'];
+const SETTINGS_KEY = 'bcp-settings';
 
 const stage = document.getElementById('stage');
 const parentBar = document.getElementById('parentBar');
@@ -8,12 +10,34 @@ const sessionOver = document.getElementById('sessionOver');
 const timerLeft = document.getElementById('timerLeft');
 const infoDialog = document.getElementById('infoDialog');
 const pieceWrap = document.getElementById('pieceWrap');
+const pieceSelect = document.getElementById('pieceSelect');
+const scenePiece = document.querySelector('.scene-piece');
 
 let sceneIndex = 0;
 let pieceIndex = 0;
+let autoCycle = true;
+let soundOn = true;
 let timerId = null;
 let hideBarId = null;
 let paused = false;
+
+// ---------- Настройки ----------
+
+function loadSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveSetting(patch) {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify({ ...loadSettings(), ...patch }));
+  } catch {
+    /* приватный режим — просто не сохраняем */
+  }
+}
 
 // ---------- Сцены ----------
 
@@ -28,9 +52,10 @@ function showScene(index) {
     t.classList.toggle('is-active', active);
     t.setAttribute('aria-selected', active);
   });
-  document.getElementById('pieceSelect').hidden = name !== 'piece';
+  pieceSelect.hidden = name !== 'piece';
   if (name === 'piece') announcePiece();
   else if ('speechSynthesis' in window) speechSynthesis.cancel();
+  saveSetting({ scene: name });
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
@@ -58,10 +83,9 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// ---------- Смена фигуры в конце каждого прохода ----------
+// ---------- Фигуры: озвучка, смена, выбор ----------
 
 const pieces = pieceWrap.querySelectorAll('.piece');
-let soundOn = true;
 
 function announcePiece() {
   if (!soundOn || !('speechSynthesis' in window)) return;
@@ -79,24 +103,8 @@ function showPiece(index) {
   announcePiece();
 }
 
-let autoCycle = true;
-
 pieceWrap.addEventListener('animationiteration', () => {
   if (autoCycle) showPiece(pieceIndex + 1);
-});
-
-// Выбор конкретной фигуры или режима «по кругу»
-document.querySelectorAll('[data-piece]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-piece]').forEach(b =>
-      b.classList.toggle('is-active', b === btn));
-    if (btn.dataset.piece === 'auto') {
-      autoCycle = true;
-    } else {
-      autoCycle = false;
-      showPiece(Number(btn.dataset.piece));
-    }
-  });
 });
 
 // Пока открыта сцена «Фигура», название повторяется каждые несколько секунд
@@ -104,14 +112,63 @@ document.querySelectorAll('[data-piece]').forEach(btn => {
 const ANNOUNCE_EVERY_MS = 5000;
 setInterval(announcePiece, ANNOUNCE_EVERY_MS);
 
+function selectPiece(value) {
+  document.querySelectorAll('[data-piece]').forEach(b =>
+    b.classList.toggle('is-active', b.dataset.piece === value));
+  if (value === 'auto') {
+    autoCycle = true;
+  } else {
+    autoCycle = false;
+    showPiece(Number(value));
+  }
+  saveSetting({ piece: value });
+}
+
+document.querySelectorAll('[data-piece]').forEach(btn => {
+  btn.addEventListener('click', () => selectPiece(btn.dataset.piece));
+});
+
+// Инверсия: белая фигура на чёрном фоне
+const invertBtn = document.getElementById('invertBtn');
+
+function setInverted(on) {
+  scenePiece.classList.toggle('inverted', on);
+  invertBtn.classList.toggle('is-active', on);
+  invertBtn.setAttribute('aria-pressed', on);
+  saveSetting({ inverted: on });
+}
+
+invertBtn.addEventListener('click', () =>
+  setInverted(!scenePiece.classList.contains('inverted')));
+
 // ---------- Скорость ----------
 
+function setSpeed(speed, save = true) {
+  document.body.className = 'speed-' + speed;
+  document.querySelectorAll('[data-speed]').forEach(b =>
+    b.classList.toggle('is-active', b.dataset.speed === speed));
+  if (save) saveSetting({ speed });
+}
+
 document.querySelectorAll('[data-speed]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.body.className = 'speed-' + btn.dataset.speed;
-    document.querySelectorAll('[data-speed]').forEach(b =>
-      b.classList.toggle('is-active', b === btn));
-  });
+  btn.addEventListener('click', () => setSpeed(btn.dataset.speed));
+});
+
+// ---------- Звук ----------
+
+const soundBtn = document.getElementById('soundBtn');
+
+function setSound(on) {
+  soundOn = on;
+  soundBtn.classList.toggle('is-active', on);
+  soundBtn.setAttribute('aria-pressed', on);
+  if (!on && 'speechSynthesis' in window) speechSynthesis.cancel();
+  saveSetting({ sound: on });
+}
+
+soundBtn.addEventListener('click', () => {
+  setSound(!soundOn);
+  if (soundOn) announcePiece();
 });
 
 // ---------- Таймер сессии ----------
@@ -153,15 +210,6 @@ document.querySelectorAll('[data-timer]').forEach(btn => {
 
 // ---------- Полный экран, печать, инфо ----------
 
-const soundBtn = document.getElementById('soundBtn');
-soundBtn.addEventListener('click', () => {
-  soundOn = !soundOn;
-  soundBtn.classList.toggle('is-active', soundOn);
-  soundBtn.setAttribute('aria-pressed', soundOn);
-  if (!soundOn && 'speechSynthesis' in window) speechSynthesis.cancel();
-  if (soundOn) announcePiece();
-});
-
 document.getElementById('fullscreenBtn').addEventListener('click', () => {
   if (document.fullscreenElement) document.exitFullscreen();
   else document.documentElement.requestFullscreen();
@@ -182,14 +230,39 @@ function pokeBar() {
 ['pointermove', 'pointerdown', 'keydown'].forEach(ev =>
   document.addEventListener(ev, pokeBar));
 
-// ---------- Старт ----------
+// ---------- Спираль (архимедова, общий path для экрана и печати) ----------
 
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  document.body.className = 'speed-static';
-  document.querySelectorAll('[data-speed]').forEach(b =>
-    b.classList.toggle('is-active', b.dataset.speed === 'static'));
+(function buildSpiral() {
+  const TURNS = 4.5;
+  const K = 45 / (TURNS * 2 * Math.PI); // радиус растёт до 45 единиц viewBox
+  let d = 'M 0 0';
+  for (let a = 0.15; a <= TURNS * 2 * Math.PI; a += 0.15) {
+    const r = K * a;
+    d += ` L ${(r * Math.cos(a)).toFixed(2)} ${(r * Math.sin(a)).toFixed(2)}`;
+  }
+  document.querySelectorAll('.spiral-path').forEach(p => p.setAttribute('d', d));
+})();
+
+// ---------- Офлайн (PWA) ----------
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('sw.js');
 }
 
-showScene(0);
-showPiece(0);
+// ---------- Старт: восстановление настроек ----------
+
+const saved = loadSettings();
+
+setSpeed(saved.speed || 'slow', false);
+setSound(saved.sound !== false);
+setInverted(saved.inverted === true);
+selectPiece(typeof saved.piece === 'string' ? saved.piece : 'auto');
+if (autoCycle) showPiece(0);
+showScene(Math.max(0, SCENES.indexOf(saved.scene)));
+
+// Системная настройка «меньше движения» важнее сохранённой скорости
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  setSpeed('static', false);
+}
+
 pokeBar();

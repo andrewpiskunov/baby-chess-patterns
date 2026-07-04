@@ -76,6 +76,44 @@ body {
   to   { transform: scale(1.12); }
 }
 
+/* Инверсия сцены с фигурой: белая фигура на чёрном фоне.
+   Фигуры чисто чёрно-белые, поэтому filter: invert даёт точную замену цветов */
+.scene-piece.inverted { background: #000; }
+.scene-piece.inverted .piece { filter: invert(1); }
+
+/* d4 — медленно вращающаяся спираль */
+.scene-spiral { background: #fff; }
+.spiral {
+  position: absolute; inset: 0; margin: auto;
+  width: 86vmin; height: 86vmin;
+  animation: rotate calc(var(--cycle) * 2) linear infinite;
+}
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* e5 — диагональные полосы, медленно ползущие поперёк себя */
+.scene-diag .diag {
+  position: absolute; inset: -50%;
+  background: repeating-linear-gradient(45deg, #000 0 12vmin, #fff 12vmin 24vmin);
+  animation: diag-pan var(--cycle) linear infinite;
+}
+@keyframes diag-pan {
+  to { transform: translate(16.97vmin, -16.97vmin); }
+}
+
+/* f6 — крупные точки, медленный дрейф */
+.scene-dots .dots {
+  position: absolute; inset: 0;
+  background-color: #fff;
+  background-image: radial-gradient(circle, #000 8.8vmin, transparent 9vmin);
+  background-size: 28vmin 28vmin;
+  animation: dots-pan calc(var(--cycle) * 2) linear infinite;
+}
+@keyframes dots-pan {
+  to { background-position: 28vmin 28vmin; }
+}
+
 /* Затемнение по окончании таймера */
 .session-over {
   position: absolute; inset: 0;
@@ -179,10 +217,19 @@ body {
   .card-stripes {
     background: repeating-linear-gradient(90deg, #000 0 48px, #fff 48px 96px);
   }
-  .card-piece {
+  .card-diag {
+    background: repeating-linear-gradient(45deg, #000 0 48px, #fff 48px 96px);
+  }
+  .card-dots {
+    background-color: #fff;
+    background-image: radial-gradient(circle, #000 40px, transparent 41px);
+    background-size: 130px 130px;
+  }
+  .card-piece, .card-spiral {
     display: flex; align-items: center; justify-content: center;
   }
   .card-piece svg { height: 80%; }
+  .card-spiral svg { height: 90%; }
 }
 
 /* ---------- Доступность ---------- */

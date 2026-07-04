@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Baby Chess Patterns — контрастные узоры для малыша</title>
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body class="speed-slow">
@@ -100,6 +106,23 @@
     <div class="layer layer-rings"></div>
   </section>
 
+  <!-- d4: медленно вращающаяся спираль -->
+  <section class="scene scene-spiral" data-scene="spiral" aria-label="Спираль">
+    <svg class="spiral" viewBox="-50 -50 100 100">
+      <path class="spiral-path" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+  </section>
+
+  <!-- e5: диагональные полосы -->
+  <section class="scene scene-diag" data-scene="diag" aria-label="Диагональные полосы">
+    <div class="diag"></div>
+  </section>
+
+  <!-- f6: крупные точки -->
+  <section class="scene scene-dots" data-scene="dots" aria-label="Крупные точки">
+    <div class="dots"></div>
+  </section>
+
   <div class="session-over" id="sessionOver">
     <p>Сессия окончена</p>
   </div>
@@ -111,6 +134,9 @@
     <button class="tab is-active" data-target="board" role="tab" aria-selected="true"><span class="coord">a1</span> Доска</button>
     <button class="tab" data-target="piece" role="tab" aria-selected="false"><span class="coord">b2</span> Фигура</button>
     <button class="tab" data-target="classic" role="tab" aria-selected="false"><span class="coord">c3</span> Узоры</button>
+    <button class="tab" data-target="spiral" role="tab" aria-selected="false"><span class="coord">d4</span> Спираль</button>
+    <button class="tab" data-target="diag" role="tab" aria-selected="false"><span class="coord">e5</span> Диагонали</button>
+    <button class="tab" data-target="dots" role="tab" aria-selected="false"><span class="coord">f6</span> Точки</button>
   </div>
 
   <div class="bar-group" id="pieceSelect" aria-label="Выбор фигуры" hidden>
@@ -121,6 +147,7 @@
     <button class="chip glyph" data-piece="3" title="Слон">♝</button>
     <button class="chip glyph" data-piece="4" title="Ферзь">♛</button>
     <button class="chip glyph" data-piece="5" title="Король">♚</button>
+    <button class="chip" id="invertBtn" aria-pressed="false">Инверсия</button>
   </div>
 
   <div class="bar-group" aria-label="Скорость">
@@ -166,6 +193,11 @@
   <div class="card card-board"></div>
   <div class="card card-rings"></div>
   <div class="card card-stripes"></div>
+  <div class="card card-spiral">
+    <svg viewBox="-50 -50 100 100"><path class="spiral-path" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/></svg>
+  </div>
+  <div class="card card-diag"></div>
+  <div class="card card-dots"></div>
   <div class="card card-piece">
     <svg viewBox="0 0 45 45"><path d="m 22.5,9 c -2.21,0 -4,1.79 -4,4 0,0.89 0.29,1.71 0.78,2.38 C 17.33,16.5 16,18.59 16,21 c 0,2.03 0.94,3.84 2.41,5.03 C 15.41,27.09 11,31.58 11,39.5 H 34 C 34,31.58 29.59,27.09 26.59,26.03 28.06,24.84 29,23.03 29,21 29,18.59 27.67,16.5 25.72,15.38 26.21,14.71 26.5,13.89 26.5,13 c 0,-2.21 -1.79,-4 -4,-4 z" fill="#000" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg>
   </div>
