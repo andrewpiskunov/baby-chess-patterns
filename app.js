@@ -80,6 +80,11 @@ function showPiece(index) {
 
 pieceWrap.addEventListener('animationiteration', () => showPiece(pieceIndex + 1));
 
+// Пока открыта сцена «Фигура», название повторяется каждые несколько секунд
+// (announcePiece сам молчит на других сценах и при выключенном звуке)
+const ANNOUNCE_EVERY_MS = 5000;
+setInterval(announcePiece, ANNOUNCE_EVERY_MS);
+
 // ---------- Скорость ----------
 
 document.querySelectorAll('[data-speed]').forEach(btn => {
