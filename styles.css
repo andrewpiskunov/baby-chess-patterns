@@ -52,7 +52,7 @@ body {
   from { transform: translateX(-28vw); }
   to   { transform: translateX(28vw); }
 }
-.piece { display: none; height: 62vmin; width: auto; fill: #000; }
+.piece { display: none; height: 62vmin; width: auto; }
 .piece.is-active { display: block; }
 
 /* c3 — «бычий глаз» из колец поверх полос; без полупрозрачных переходов,
@@ -180,7 +180,7 @@ body {
   .card-piece {
     display: flex; align-items: center; justify-content: center;
   }
-  .card-piece svg { height: 80%; fill: #000; }
+  .card-piece svg { height: 80%; }
 }
 
 /* ---------- Доступность ---------- */
