@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baby Chess Patterns — контрастные узоры для малыша</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="speed-slow">
+
+<!-- ЭКРАННЫЕ СЦЕНЫ -->
+<main class="stage" id="stage" aria-label="Область показа узоров">
+
+  <!-- a1: шахматная доска с медленной инверсией -->
+  <section class="scene scene-board" data-scene="board" aria-label="Шахматная доска">
+    <div class="board"></div>
+  </section>
+
+  <!-- b2: плывущий силуэт фигуры -->
+  <section class="scene scene-piece" data-scene="piece" aria-label="Силуэт шахматной фигуры">
+    <div class="piece-track">
+      <div class="piece-wrap" id="pieceWrap">
+        <svg class="piece piece-pawn" viewBox="0 0 100 140" aria-label="Пешка">
+          <circle cx="50" cy="32" r="20"/>
+          <path d="M38 48 h24 l9 48 h-42 z"/>
+          <rect x="20" y="100" width="60" height="16" rx="5"/>
+        </svg>
+        <svg class="piece piece-rook" viewBox="0 0 100 140" aria-label="Ладья">
+          <path d="M24 18 h13 v13 h9 v-13 h8 v13 h9 v-13 h13 v28 h-52 z"/>
+          <path d="M31 46 h38 l7 52 h-52 z"/>
+          <rect x="18" y="102" width="64" height="16" rx="5"/>
+        </svg>
+        <svg class="piece piece-knight" viewBox="0 0 100 140" aria-label="Конь">
+          <path d="M30 118 L30 108 C30 95 38 88 47 83 C36 80 28 70 28 58 L14 62 L12 52 C12 50 20 46 28 42 C30 28 40 18 54 16 L52 6 L64 14 C80 20 86 36 86 56 L86 118 Z"/>
+          <rect x="20" y="112" width="72" height="14" rx="5"/>
+        </svg>
+        <svg class="piece piece-queen" viewBox="0 0 100 140" aria-label="Ферзь">
+          <circle cx="26" cy="18" r="7"/>
+          <circle cx="50" cy="10" r="7"/>
+          <circle cx="74" cy="18" r="7"/>
+          <path d="M25 27 L38 52 L50 22 L62 52 L75 27 L67 68 L33 68 Z"/>
+          <path d="M35 68 h30 l9 36 h-48 z"/>
+          <rect x="20" y="104" width="60" height="16" rx="5"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- c3: полосы и кольца -->
+  <section class="scene scene-classic" data-scene="classic" aria-label="Полосы и кольца">
+    <div class="layer layer-stripes"></div>
+    <div class="layer layer-rings"></div>
+  </section>
+
+  <div class="session-over" id="sessionOver">
+    <p>Сессия окончена</p>
+  </div>
+</main>
+
+<!-- ПАНЕЛЬ РОДИТЕЛЯ -->
+<nav class="parent-bar" id="parentBar" aria-label="Управление">
+  <div class="scene-tabs" role="tablist">
+    <button class="tab is-active" data-target="board" role="tab" aria-selected="true"><span class="coord">a1</span> Доска</button>
+    <button class="tab" data-target="piece" role="tab" aria-selected="false"><span class="coord">b2</span> Фигура</button>
+    <button class="tab" data-target="classic" role="tab" aria-selected="false"><span class="coord">c3</span> Узоры</button>
+  </div>
+
+  <div class="bar-group" aria-label="Скорость">
+    <button class="chip" data-speed="static">Статика</button>
+    <button class="chip" data-speed="slower">Очень медленно</button>
+    <button class="chip is-active" data-speed="slow">Медленно</button>
+  </div>
+
+  <div class="bar-group" aria-label="Таймер">
+    <button class="chip" data-timer="3">3 мин</button>
+    <button class="chip" data-timer="5">5 мин</button>
+    <span class="timer-left" id="timerLeft" hidden></span>
+  </div>
+
+  <div class="bar-group">
+    <button class="chip" id="fullscreenBtn">Во весь экран</button>
+    <button class="chip" id="printBtn">Печать карточек</button>
+    <button class="chip" id="infoBtn" aria-haspopup="dialog">ⓘ</button>
+  </div>
+</nav>
+
+<!-- ИНФО / ДИСКЛЕЙМЕР -->
+<dialog class="info" id="infoDialog">
+  <h2>Как пользоваться</h2>
+  <p>Малыши до 3 месяцев различают в основном крупные высококонтрастные
+  чёрно-белые формы и следят за медленно движущимися объектами.
+  Показывайте узоры с расстояния 20–30 см от лица, по 3–5 минут,
+  когда малыш спокоен и бодр.</p>
+  <p><strong>Важно.</strong> Американская академия педиатрии не рекомендует
+  экраны детям до 18 месяцев. Лучший способ использовать эту программу —
+  нажать «Печать карточек» и показывать малышу бумажные карточки,
+  а экран оставить запасным вариантом.</p>
+  <p>Переключение сцен — клик по экрану или стрелки ← →.
+  Пробел — пауза и продолжение движения.</p>
+  <form method="dialog"><button class="chip">Понятно</button></form>
+</dialog>
+
+<!-- ПЕЧАТНЫЕ КАРТОЧКИ (видны только при печати) -->
+<div class="print-cards" aria-hidden="true">
+  <div class="card card-board"></div>
+  <div class="card card-rings"></div>
+  <div class="card card-stripes"></div>
+  <div class="card card-piece">
+    <svg viewBox="0 0 100 140"><circle cx="50" cy="32" r="20"/><path d="M38 48 h24 l9 48 h-42 z"/><rect x="20" y="100" width="60" height="16" rx="5"/></svg>
+  </div>
+  <div class="card card-piece">
+    <svg viewBox="0 0 100 140"><path d="M24 18 h13 v13 h9 v-13 h8 v13 h9 v-13 h13 v28 h-52 z"/><path d="M31 46 h38 l7 52 h-52 z"/><rect x="18" y="102" width="64" height="16" rx="5"/></svg>
+  </div>
+  <div class="card card-piece">
+    <svg viewBox="0 0 100 140"><path d="M30 118 L30 108 C30 95 38 88 47 83 C36 80 28 70 28 58 L14 62 L12 52 C12 50 20 46 28 42 C30 28 40 18 54 16 L52 6 L64 14 C80 20 86 36 86 56 L86 118 Z"/><rect x="20" y="112" width="72" height="14" rx="5"/></svg>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
