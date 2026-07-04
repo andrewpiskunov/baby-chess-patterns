@@ -28,6 +28,7 @@ function showScene(index) {
     t.classList.toggle('is-active', active);
     t.setAttribute('aria-selected', active);
   });
+  document.getElementById('pieceSelect').hidden = name !== 'piece';
   if (name === 'piece') announcePiece();
   else if ('speechSynthesis' in window) speechSynthesis.cancel();
 }
@@ -78,7 +79,25 @@ function showPiece(index) {
   announcePiece();
 }
 
-pieceWrap.addEventListener('animationiteration', () => showPiece(pieceIndex + 1));
+let autoCycle = true;
+
+pieceWrap.addEventListener('animationiteration', () => {
+  if (autoCycle) showPiece(pieceIndex + 1);
+});
+
+// Выбор конкретной фигуры или режима «по кругу»
+document.querySelectorAll('[data-piece]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-piece]').forEach(b =>
+      b.classList.toggle('is-active', b === btn));
+    if (btn.dataset.piece === 'auto') {
+      autoCycle = true;
+    } else {
+      autoCycle = false;
+      showPiece(Number(btn.dataset.piece));
+    }
+  });
+});
 
 // Пока открыта сцена «Фигура», название повторяется каждые несколько секунд
 // (announcePiece сам молчит на других сценах и при выключенном звуке)

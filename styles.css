@@ -131,6 +131,8 @@ body {
 .chip:hover { border-color: #fff; color: #fff; }
 .chip.is-active { background: #fff; color: #000; border-color: #fff; }
 
+.chip.glyph { font-size: 16px; line-height: 1; padding: 5px 8px; }
+
 .timer-left {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 12px; color: rgba(255,255,255,0.8); min-width: 42px;
