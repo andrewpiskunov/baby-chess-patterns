@@ -1,6 +1,7 @@
-// Кэш-первый service worker: после первого открытия приложение работает офлайн
+// Service worker «сеть, потом кэш»: при сети всегда свежие файлы,
+// офлайн — из кэша; после первого открытия приложение работает без сети
 
-const CACHE = 'bcp-v1';
+const CACHE = 'bcp-v2';
 const ASSETS = [
   '.',
   'index.html',
@@ -31,7 +32,12 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request, { ignoreSearch: true })
-      .then(cached => cached || fetch(e.request))
+    fetch(e.request)
+      .then(response => {
+        const copy = response.clone();
+        caches.open(CACHE).then(c => c.put(e.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
 });

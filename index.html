@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Baby Chess Patterns — контрастные узоры для малыша</title>
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -148,6 +148,7 @@
     <button class="chip glyph" data-piece="4" title="Ферзь">♛</button>
     <button class="chip glyph" data-piece="5" title="Король">♚</button>
     <button class="chip" id="invertBtn" aria-pressed="false">Инверсия</button>
+    <button class="chip is-active" id="soundBtn" aria-pressed="true">Звук</button>
   </div>
 
   <div class="bar-group" aria-label="Скорость">
@@ -163,11 +164,12 @@
   </div>
 
   <div class="bar-group">
-    <button class="chip is-active" id="soundBtn" aria-pressed="true">Звук</button>
     <button class="chip" id="fullscreenBtn">Во весь экран</button>
     <button class="chip" id="printBtn">Печать карточек</button>
     <button class="chip" id="infoBtn" aria-haspopup="dialog">ⓘ</button>
   </div>
+
+  <button class="chip bar-hide" id="hideBtn" aria-label="Скрыть панель">✕</button>
 </nav>
 
 <!-- ИНФО / ДИСКЛЕЙМЕР -->
@@ -185,6 +187,8 @@
   Пробел — пауза и продолжение движения. На сцене «Фигура» название фигуры
   («Пешка», «Ладья»…) произносится вслух и повторяется каждые несколько
   секунд — отключается кнопкой «Звук».</p>
+  <p>✕ скрывает панель, чтобы малыша ничто не отвлекало; вернуть её —
+  коснуться экрана или нажать любую клавишу.</p>
   <form method="dialog"><button class="chip">Понятно</button></form>
 </dialog>
 

@@ -51,6 +51,7 @@ function showScene(index) {
     const active = t.dataset.target === name;
     t.classList.toggle('is-active', active);
     t.setAttribute('aria-selected', active);
+    if (active) t.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   });
   pieceSelect.hidden = name !== 'piece';
   if (name === 'piece') announcePiece();
@@ -171,6 +172,17 @@ soundBtn.addEventListener('click', () => {
   if (soundOn) announcePiece();
 });
 
+// ---------- Скрытие панели вручную ----------
+
+let manualHide = false;
+
+document.getElementById('hideBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  manualHide = true;
+  parentBar.classList.add('is-hidden');
+  clearTimeout(hideBarId);
+});
+
 // ---------- Таймер сессии ----------
 
 function startTimer(minutes) {
@@ -221,8 +233,17 @@ document.getElementById('infoBtn').addEventListener('click', () => infoDialog.sh
 
 // ---------- Авто-скрытие панели ----------
 
-function pokeBar() {
-  parentBar.classList.remove('is-hidden');
+function pokeBar(e) {
+  // после ✕ панель возвращает только касание или клавиша, не движение мыши
+  if (manualHide) {
+    if (e && e.type === 'pointermove') return;
+    manualHide = false;
+  }
+  if (parentBar.classList.contains('is-hidden')) {
+    parentBar.classList.remove('is-hidden');
+    const activeTab = document.querySelector('.tab.is-active');
+    if (activeTab) activeTab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
   clearTimeout(hideBarId);
   hideBarId = setTimeout(() => parentBar.classList.add('is-hidden'), 5000);
 }
@@ -266,3 +287,9 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 }
 
 pokeBar();
+
+// После полной загрузки подкрутить строку вкладок к активной сцене
+window.addEventListener('load', () => {
+  const activeTab = document.querySelector('.tab.is-active');
+  if (activeTab) activeTab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+});
